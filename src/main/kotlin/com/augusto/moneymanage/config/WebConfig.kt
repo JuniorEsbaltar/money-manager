@@ -13,13 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @EnableWebMvc
 class WebConfig(private val userRepository: UserRepository) : WebMvcConfigurer {
 
-    @Bean
-    fun tokenInterceptor(userRepository: UserRepository): TokenInterceptor {
-        return TokenInterceptor(userRepository);
-    }
-
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(tokenInterceptor(userRepository))
+        registry.addInterceptor(TokenInterceptor(userRepository))
     }
 
     override fun addCorsMappings(corsRegistry: CorsRegistry) {

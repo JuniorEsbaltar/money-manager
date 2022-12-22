@@ -20,8 +20,4 @@ class TokenInterceptor @Autowired constructor(private val userRepository: UserRe
         request.setAttribute("id", user.id)
         return true
     }
-
-    override fun postHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any, modelAndView: ModelAndView?) {}
-
-    override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) {}
 }

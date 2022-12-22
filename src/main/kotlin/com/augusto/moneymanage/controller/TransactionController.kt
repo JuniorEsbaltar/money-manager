@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.text.SimpleDateFormat
+import java.util.*
 
 @RestController
 @RequestMapping("/transactions")
@@ -31,18 +33,37 @@ class TransactionController(private val transactionService: TransactionService) 
     }
 
     @PostMapping
-    fun save(@RequestBody transactionInDto: TransactionInDTO, request: HttpServletRequest): ResponseEntity<Void> {
-        val id = request.getAttribute("id") as Long
-        val user = User(id)
-        val (name, amount, date, type, description) = transactionInDto
-        val transaction = Transaction(0L, name, amount, date, type, description, user)
+    fun save(@RequestBody transactionInDto: TransactionInDTO, request: HttpServletRequest): ResponseEntity<Transaction> {
+        val userId = request.getAttribute("id") as Long
 
-        transactionService.save(transaction)
-        return ResponseEntity.ok().build()
+//        val user = transactionService.findUserById(userId);
+
+        val createdTransaction = transactionService.save(transactionInDto, userId)
+        return ResponseEntity.status(201).body(createdTransaction)
+    }
+
+    @PutMapping("{id}")
+    fun update(@PathVariable id: Long, @RequestBody transactionInDto: TransactionInDTO, request: HttpServletRequest): ResponseEntity<Transaction> {
+        val userId = request.getAttribute("id") as Long
+
+        val existTransaction = transactionService.existByIdAndUserId(id, userId)
+
+        if (!existTransaction) {
+            return ResponseEntity.notFound().build()
+        }
+        val transactionCreated = transactionService.update(id, userId, transactionInDto)
+        return ResponseEntity.ok().body(transactionCreated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteById(@PathVariable id: Long): ResponseEntity<Void> {
+    fun deleteById(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<Void> {
+        val userId = request.getAttribute("id") as Long
+        val existTransaction = this.transactionService.existByIdAndUserId(id, userId)
+
+        if (!existTransaction) {
+            return ResponseEntity.notFound().build()
+        }
+
         transactionService.delete(id)
         return ResponseEntity.noContent().build()
     }

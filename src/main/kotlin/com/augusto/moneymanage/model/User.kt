@@ -12,6 +12,8 @@ data class User(
     @Column(nullable = false)
     val token: String = "",
 
+    val name: String = "",
+
     @OneToMany(mappedBy = "user")
     val transactions: List<Transaction?> = mutableListOf<Transaction>().toList()
 )

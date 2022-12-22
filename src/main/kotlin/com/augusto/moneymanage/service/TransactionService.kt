@@ -1,9 +1,13 @@
 package com.augusto.moneymanage.service
 
+import com.augusto.moneymanage.dto.TransactionInDTO
 import com.augusto.moneymanage.dto.TransactionOutDTO
 import com.augusto.moneymanage.model.Transaction
 import com.augusto.moneymanage.model.TransactionType
+import com.augusto.moneymanage.model.User
 import com.augusto.moneymanage.repository.TransactionRepository
+import com.augusto.moneymanage.repository.UserRepository
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -11,20 +15,30 @@ import java.util.*
 
 
 @Service
-class TransactionService (private val transactionRepository: TransactionRepository) {
+class TransactionService (private val transactionRepository: TransactionRepository, private val userRepository: UserRepository) {
 
-    fun save(transaction: Transaction): Transaction {
-        if (transaction.id !== null) {
-            val currentTraction = this.transactionRepository.findById(transaction.id).orElse(null);
-            if (currentTraction?.user?.id !== transaction.user?.id) {
+    fun save(transactionInDto: TransactionInDTO, userId: Long): Transaction {
+        val user = User(userId)
+        val (name, description, amount, type, date) = transactionInDto
+        val transaction = Transaction(0L, name, description, amount, type, date, user)
 
-            }
-        }
-        return this.transactionRepository.save(transaction)
+        return transactionRepository.save(transaction)
+    }
+
+    fun update(id: Long, userId: Long, transactionInDto: TransactionInDTO): Transaction {
+        val (name, description, amount, type, date) = transactionInDto
+        val user = User(userId)
+        val transaction = Transaction(id, name, description, amount, type, date, user)
+
+        return transactionRepository.save(transaction)
     }
 
     fun delete(id: Long) {
-        this.transactionRepository.deleteById(id)
+        transactionRepository.deleteById(id)
+    }
+
+    fun existByIdAndUserId(id: Long, userId: Long): Boolean {
+        return transactionRepository.existsByIdAndUserId(id, userId)
     }
 
 //    fun findByDate(startDate: Date): List<TransactionOutDTO>  {
@@ -78,7 +92,7 @@ class TransactionService (private val transactionRepository: TransactionReposito
         val endOfMonth: Calendar = (calendar.clone() as Calendar)
         endOfMonth.add(Calendar.MONTH, 1)
 
-        val transactions: List<Transaction> = this.transactionRepository
+        val transactions: List<Transaction> = transactionRepository
             .findByDateBetween(
                 calendarToLocalDateTime(calendar),
                 calendarToLocalDateTime(endOfMonth)

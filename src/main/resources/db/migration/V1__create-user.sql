@@ -1,0 +1,5 @@
+CREATE TABLE users (
+   id SERIAL NOT NULL PRIMARY KEY,
+   token VARCHAR(60) NOT NULL,
+   name VARCHAR(60) NOT NULL
+);
