@@ -1,10 +1,12 @@
 package com.augusto.moneymanage.dto
 
 import com.augusto.moneymanage.model.Transaction
-import java.util.Calendar
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.util.Date
 
-class TransactionOutDTO(
-    val date: Calendar,
+data class TransactionOutDTO(
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    val date: Date,
     val amountExpense: Double,
     val amountIncome: Double,
     val transactions: List<Transaction>,

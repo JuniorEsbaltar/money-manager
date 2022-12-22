@@ -2,10 +2,10 @@ package com.augusto.moneymanage.repository
 
 import com.augusto.moneymanage.model.Transaction
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
+@Repository
 interface TransactionRepository : JpaRepository<Transaction, Long> {
-    fun findByDateBetweenAndIsRecurringIsFalse(start: LocalDateTime, end: LocalDateTime): List<Transaction>
-
-    fun findByIsRecurringIsTrue(): List<Transaction>
+    fun findByDateBetween(start: LocalDateTime, end: LocalDateTime): List<Transaction>
 }
