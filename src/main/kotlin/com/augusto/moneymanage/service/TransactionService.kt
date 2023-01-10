@@ -41,46 +41,7 @@ class TransactionService (private val transactionRepository: TransactionReposito
         return transactionRepository.existsByIdAndUserId(id, userId)
     }
 
-//    fun findByDate(startDate: Date): List<TransactionOutDTO>  {
-//        val calendar = Calendar.getInstance()
-//
-//        val months = mutableListOf<Calendar>()
-//        val transactionsDTO = mutableListOf<TransactionOutDTO>()
-//
-//        calendar.time = startDate
-//        calendar.add(Calendar.MONTH, -2)
-//        calendar.set(Calendar.DATE, 1)
-//        calendar.set(Calendar.HOUR_OF_DAY, 0)
-//        calendar.set(Calendar.MINUTE, 0)
-//        calendar.set(Calendar.SECOND, 0)
-//
-//        for (i in 0 until 9) {
-//            val calendarClone = calendar.clone() as Calendar
-//            calendarClone.add(Calendar.MONTH, i)
-//            months.add(calendarClone)
-//        }
-//
-//        months.forEach {date ->
-//            val endOfMonth: Calendar = (date.clone() as Calendar)
-//            endOfMonth.add(Calendar.MONTH, 1)
-//
-//            val transactions: List<Transaction> = this.transactionRepository
-//                .findByDateBetween(
-//                    calendarToLocalDateTime(date),
-//                    calendarToLocalDateTime(endOfMonth)
-//                )
-//
-//            val amountExpense = sumByType(transactions + transactionsRecurring, TransactionType.EXPENSE)
-//            val amountIncome = sumByType(transactions + transactionsRecurring, TransactionType.INCOME)
-//
-//            val transactionDTO = TransactionOutDTO(date = date.time, amountExpense = amountExpense,  amountIncome = amountIncome, transactions + transactionsRecurring)
-//            transactionsDTO.add(transactionDTO)
-//        }
-//
-//        return transactionsDTO.toList()
-//    }
-
-    fun getByDate(startDate: Date): TransactionOutDTO {
+    fun getByDate(startDate: Date, userId: Long): TransactionOutDTO {
         val calendar = Calendar.getInstance()
 
         calendar.time = startDate
@@ -93,7 +54,8 @@ class TransactionService (private val transactionRepository: TransactionReposito
         endOfMonth.add(Calendar.MONTH, 1)
 
         val transactions: List<Transaction> = transactionRepository
-            .findByDateBetween(
+            .findByUserIdAndDateBetween(
+                userId,
                 calendarToLocalDateTime(calendar),
                 calendarToLocalDateTime(endOfMonth)
             )

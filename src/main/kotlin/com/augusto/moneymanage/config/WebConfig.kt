@@ -20,5 +20,7 @@ class WebConfig(private val userRepository: UserRepository) : WebMvcConfigurer {
     override fun addCorsMappings(corsRegistry: CorsRegistry) {
         corsRegistry.addMapping("/**")
             .allowedOrigins("*")
+            .allowedMethods("*")
+            .allowedHeaders("*")
     }
 }

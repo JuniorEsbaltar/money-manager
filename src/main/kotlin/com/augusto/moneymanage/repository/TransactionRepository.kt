@@ -8,6 +8,6 @@ import java.util.Optional
 
 @Repository
 interface TransactionRepository : JpaRepository<Transaction, Long> {
-    fun findByDateBetween(start: LocalDateTime, end: LocalDateTime): List<Transaction>
+    fun findByUserIdAndDateBetween(userId: Long, start: LocalDateTime, end: LocalDateTime): List<Transaction>
     fun existsByIdAndUserId(id: Long, userId: Long): Boolean
 }

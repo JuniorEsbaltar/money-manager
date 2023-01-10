@@ -24,9 +24,10 @@ import java.util.*
 class TransactionController(private val transactionService: TransactionService) {
 
     @GetMapping("/{date}")
-    fun getOne(@PathVariable date: String): ResponseEntity<TransactionOutDTO> {
+    fun getOne(@PathVariable date: String, request: HttpServletRequest): ResponseEntity<TransactionOutDTO> {
+        val userId = request.getAttribute("id") as Long
         val dateFormat = SimpleDateFormat("dd-MM-yyyy").parse(date)
-        val transactions: TransactionOutDTO = transactionService.getByDate(dateFormat)
+        val transactions: TransactionOutDTO = transactionService.getByDate(dateFormat, userId)
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(transactions)
@@ -35,8 +36,6 @@ class TransactionController(private val transactionService: TransactionService) 
     @PostMapping
     fun save(@RequestBody transactionInDto: TransactionInDTO, request: HttpServletRequest): ResponseEntity<Transaction> {
         val userId = request.getAttribute("id") as Long
-
-//        val user = transactionService.findUserById(userId);
 
         val createdTransaction = transactionService.save(transactionInDto, userId)
         return ResponseEntity.status(201).body(createdTransaction)

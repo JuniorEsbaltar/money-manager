@@ -10,6 +10,12 @@ import org.springframework.web.servlet.ModelAndView
 class TokenInterceptor @Autowired constructor(private val userRepository: UserRepository): HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val token = request.getHeader("Authorization")
+
+        if (token == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+            return false
+        }
+        
         val user = this.userRepository.findByToken(token).orElse(null)
 
         if (user == null) {
